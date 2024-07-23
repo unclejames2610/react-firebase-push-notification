@@ -1,23 +1,28 @@
-import logo from './logo.svg';
-import './App.css';
+import { getToken } from "firebase/messaging";
+import { useEffect } from "react";
+import "./App.css";
+import { messaging } from "./firebase";
 
 function App() {
+  async function requestPermission() {
+    const permission = await Notification.requestPermission();
+
+    if (permission === "granted") {
+      const token = await getToken(messaging, {
+        vapidKey: process.env.VAPID_KEY,
+      });
+      console.log("Token Gen", token);
+    } else if (permission === "denied") {
+      alert("Notification Denied");
+    }
+  }
+  useEffect(() => {
+    requestPermission();
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="header">
+      <h1 className="header-title">Notification Test</h1>
     </div>
   );
 }
